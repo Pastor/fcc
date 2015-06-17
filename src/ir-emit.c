@@ -19,40 +19,40 @@ static void irEmitBlock (irCtx* ctx, FILE* file,
 static void irEmitTerm (irCtx* ctx, FILE* file, const irTerm* term, const irBlock* nextblock);
 
 void irEmit (irCtx* ctx) {
-    FILE* file = ctx->asm->file;
+    FILE* file = ctx->asmm->file;
 
-    asmFilePrologue(ctx->asm);
+    asmFilePrologue(ctx->asmm);
 
     for (int i = 0; i < ctx->fns.length; i++) {
         irFn* fn = vectorGet(&ctx->fns, i);
         irEmitFn(ctx, file, fn);
     }
 
-    asmDataSection(ctx->asm);
+    asmDataSection(ctx->asmm);
 
     for (int i = 0; i < ctx->data.length; i++) {
         irStaticData* data = vectorGet(&ctx->data, i);
         irEmitStaticData(ctx, file, data);
     }
 
-    asmRODataSection(ctx->asm);
+    asmRODataSection(ctx->asmm);
 
     for (int i = 0; i < ctx->rodata.length; i++) {
         irStaticData* data = vectorGet(&ctx->rodata, i);
         irEmitStaticData(ctx, file, data);
     }
 
-    asmFileEpilogue(ctx->asm);
+    asmFileEpilogue(ctx->asmm);
 }
 
 static void irEmitStaticData (irCtx* ctx, FILE* file, const irStaticData* data) {
     (void) file;
 
     if (data->tag == dataRegular)
-        asmStaticData(ctx->asm, data->label, data->global, data->size, data->initial);
+        asmStaticData(ctx->asmm, data->label, data->global, data->size, data->initial);
 
     else if (data->tag == dataStringConstant)
-        asmStringConstant(ctx->asm, data->strlabel, data->str);
+        asmStringConstant(ctx->asmm, data->strlabel, data->str);
 
     else
         debugErrorUnhandledInt("irEmitStaticData", "static data tag", data->tag);
@@ -113,7 +113,7 @@ static void irEmitBlock (irCtx* ctx, FILE* file,
     if (!(   block->preds.length <= 1
           && (block->preds.length == 1 ? vectorGet(&block->preds, 0) == prevblock
                                         : true)))
-        asmLabel(ctx->asm, block->label);
+        asmLabel(ctx->asmm, block->label);
 
     fputs(block->str, file);
     debugMsg(block->str);
@@ -142,16 +142,16 @@ static void irEmitTerm (irCtx* ctx, FILE* file, const irTerm* term, const irBloc
     else if (term->tag == termBranch) {
         if (term->ifTrue == nextblock) {
             operand cond = operandCreateFlags(conditionNegate(term->cond.condition));
-            asmBranch(ctx->asm, cond, term->ifFalse->label);
+            asmBranch(ctx->asmm, cond, term->ifFalse->label);
             jumpTo = term->ifTrue;
 
         } else {
-            asmBranch(ctx->asm, term->cond, term->ifTrue->label);
+            asmBranch(ctx->asmm, term->cond, term->ifTrue->label);
             jumpTo = term->ifFalse;
         }
 
     } else if (term->tag == termCall) {
-        asmCall(ctx->asm, term->toAsSym->label);
+        asmCall(ctx->asmm, term->toAsSym->label);
         jumpTo = term->ret;
 
     } else if (term->tag == termCallIndirect) {
@@ -160,12 +160,12 @@ static void irEmitTerm (irCtx* ctx, FILE* file, const irTerm* term, const irBloc
         jumpTo = term->ret;
 
     } else if (term->tag == termReturn)
-        asmReturn(ctx->asm);
+        asmReturn(ctx->asmm);
 
     else
         debugErrorUnhandledInt("irEmitTerm", "terminal tag", term->tag);
 
     /*Perform the jump if not redundant*/
     if (jumpTo && jumpTo != nextblock)
-        asmJump(ctx->asm, jumpTo->label);
+        asmJump(ctx->asmm, jumpTo->label);
 }

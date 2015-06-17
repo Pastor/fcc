@@ -1,3 +1,5 @@
+#pragma once
+#include "../std/compat.h"
 typedef struct type type;
 typedef struct ast ast;
 

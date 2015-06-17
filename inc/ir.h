@@ -123,7 +123,7 @@ typedef struct irCtx {
 
     int labelNo;
 
-    asmCtx* asm;
+    asmCtx* asmm;
     const architecture* arch;
 } irCtx;
 

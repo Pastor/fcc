@@ -1,5 +1,6 @@
 #include "../inc/emitter-helpers.h"
 
+#include "../inc/architecture.h"
 #include "../inc/debug.h"
 #include "../inc/type.h"
 #include "../inc/sym.h"

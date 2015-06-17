@@ -1,3 +1,4 @@
+#include "sym.h"
 #include "operand.h"
 
 typedef struct ast ast;

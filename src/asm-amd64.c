@@ -31,7 +31,7 @@ void asmFnLinkage (FILE* file, const char* name) {
 }
 
 void asmFnPrologue (irCtx* ir, irBlock* block, int localSize) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     /*Register saving, create a new stack frame, stack variables etc*/
 
@@ -48,7 +48,7 @@ void asmFnPrologue (irCtx* ir, irBlock* block, int localSize) {
 }
 
 void asmFnEpilogue (irCtx* ir, irBlock* block) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     /*Pop off saved regs in reverse order*/
     for (int i = ctx->arch->calleeSaveRegs.length-1; i >= 0 ; i--) {
@@ -61,12 +61,12 @@ void asmFnEpilogue (irCtx* ir, irBlock* block) {
 }
 
 void asmSaveReg (irCtx* ir, irBlock* block, regIndex r) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
     irBlockOut(block, "push %s", regIndexGetName(r, ctx->arch->wordsize));
 }
 
 void asmRestoreReg (irCtx* ir, irBlock* block, regIndex r) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
     irBlockOut(block, "pop %s", regIndexGetName(r, ctx->arch->wordsize));
 }
 
@@ -134,7 +134,7 @@ void asmReturn (asmCtx* ctx) {
 }
 
 void asmPush (irCtx* ir, irBlock* block, operand L) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     /*Flags*/
     if (L.tag == operandFlags) {
@@ -182,14 +182,14 @@ void asmPop (irCtx* ir, irBlock* block, operand L) {
 }
 
 void asmPushN (irCtx* ir, irBlock* block, int n) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     if (n)
         asmBOP(ir, block, bopSub, ctx->stackPtr, operandCreateLiteral(n*ctx->arch->wordsize));
 }
 
 void asmPopN (irCtx* ir, irBlock* block, int n) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     if (n)
         asmBOP(ir, block, bopAdd, ctx->stackPtr, operandCreateLiteral(n*ctx->arch->wordsize));
@@ -200,7 +200,7 @@ static bool operandIsMem (operand L) {
 }
 
 void asmMove (irCtx* ir, irBlock* block, operand Dest, operand Src) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     if (Dest.tag == operandInvalid || Src.tag == operandInvalid)
         return;
@@ -285,7 +285,7 @@ void asmRepStos (irCtx* ir, irBlock* block, operand RAX, operand RCX, operand RD
 }
 
 void asmEvalAddress (irCtx* ir, irBlock* block, operand L, operand R) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     if (operandIsMem(L) && operandIsMem(R)) {
         operand intermediate = operandCreateReg(regAlloc(ctx->arch->wordsize));
@@ -304,7 +304,7 @@ void asmEvalAddress (irCtx* ir, irBlock* block, operand L, operand R) {
 }
 
 void asmCompare (irCtx* ir, irBlock* block, operand L, operand R) {
-    asmCtx* ctx = ir->asm;
+    asmCtx* ctx = ir->asmm;
 
     if (   (operandIsMem(L) && operandIsMem(R))
         || (L.tag == operandLiteral && R.tag == operandLiteral)) {
