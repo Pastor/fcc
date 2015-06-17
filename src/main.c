@@ -7,6 +7,8 @@
 #include "../inc/sym.h"
 #include "../inc/reg.h"
 
+#include "../defaults.h"
+
 #include "string.h"
 #include "stdlib.h"
 #include "stdio.h"

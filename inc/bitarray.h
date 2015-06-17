@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../std/compat.h"
 #include "stdint.h"
 
 typedef intmax_t bitarrayWord;

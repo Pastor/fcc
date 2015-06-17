@@ -1,3 +1,4 @@
+#pragma once
 typedef struct ast ast;
 typedef struct architecture architecture;
 

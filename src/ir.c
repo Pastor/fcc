@@ -71,7 +71,7 @@ void irInit (irCtx* ctx, const char* output, const architecture* arch) {
 
     ctx->labelNo = 0;
 
-    ctx->asm = asmInit(output, arch);
+    ctx->asmm = asmInit(output, arch);
     ctx->arch = arch;
 }
 
@@ -79,7 +79,7 @@ void irFree (irCtx* ctx) {
     vectorFreeObjs(&ctx->fns, (vectorDtor) irFnDestroy);
     vectorFreeObjs(&ctx->data, (vectorDtor) irStaticDataDestroy);
     vectorFreeObjs(&ctx->rodata, (vectorDtor) irStaticDataDestroy);
-    asmEnd(ctx->asm);
+    asmEnd(ctx->asmm);
 }
 
 static void irAddFn (irCtx* ctx, irFn* fn) {
