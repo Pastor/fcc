@@ -196,7 +196,7 @@ static void analyzerStruct (analyzerCtx* ctx, ast* Node) {
 
     Node->dt = typeCreateBasic(Node->symbol);
 
-    /*TODO: check compatiblity
+    /*TODO: check compatibility
             of? redecls or something?*/
 }
 
