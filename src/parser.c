@@ -12,6 +12,10 @@
 #include "stdlib.h"
 #include "string.h"
 
+#if defined(DIRECT_PREPROCESSOR)
+#include "../inc/prep_direct.h"
+#endif
+
 static ast* parserModule (parserCtx* ctx);
 static ast* parserUsing (parserCtx* ctx);
 
@@ -93,6 +97,22 @@ parserResult parser (const char* filename, const char* initialPath, compilerCtx*
     char* fullname = parserFindFile(filename, initialPath, comp->searchPaths);
 
     if (fullname) {
+#if defined(DIRECT_PREPROCESSOR)
+        {
+			prepDirectCtx ctx;
+			prepDirectResult result;
+
+			prepDirectInit(&ctx, comp->searchPaths);
+			prepDirectSet(&ctx, "DIRECT_PREPROCESS=1");
+			result = preprocess(fullname, initialPath);
+			if (result.errors == 0) {
+			  free((void *)fullname);
+			  fullname = strdup(result.filename);
+			}
+			prepDirectResultDestroy(&result);
+			prepDirectEnd(&ctx);
+        }
+#endif
         parserResult* module = hashmapMap(&comp->modules, fullname);
 
         if (!module) {

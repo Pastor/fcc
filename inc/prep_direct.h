@@ -23,4 +23,6 @@ void prepDirectSet(prepDirectCtx *ctx, const char * const def);
 
 void prepDirectEnd(prepDirectCtx *ctx);
 
+void prepDirectResultDestroy (prepDirectResult* result);
+
 prepDirectResult preprocess(const char* filename, const char* initialPath);
