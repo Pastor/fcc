@@ -53,6 +53,7 @@ prepDirectResult
 preprocess(const char* filename, const char* initialPath)
 {
   /** Stub */
+  (void)initialPath;
   return (prepDirectResult) { .errors = 0, .warnings = 0, .filename = strdup(filename) };
 }
 
@@ -60,5 +61,6 @@ void
 prepDirectResultDestroy (prepDirectResult* result)
 {
   /** Free filename and remove file */
+  (void )result;
 }
 
