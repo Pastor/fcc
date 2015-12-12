@@ -13,7 +13,7 @@
 #include "string.h"
 
 #if defined(DIRECT_PREPROCESSOR)
-#include "../inc/prep_direct.h"
+#include "../inc/prep-direct.h"
 #endif
 
 static ast* parserModule (parserCtx* ctx);
