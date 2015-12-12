@@ -47,8 +47,12 @@ static void verrorf (const char* format, va_list args) {
 
     int flen = strlen(format);
 
+    int upto = 0;
+
     for (int i = 0; i < flen; i++) {
         if (format[i] == '$') {
+            printf("%.*s", i-upto, format+upto);
+            upto = i+2;
             i++;
 
             /*Regular string*/
@@ -138,10 +142,10 @@ static void verrorf (const char* format, va_list args) {
 
             else
                 debugErrorUnhandledChar("verrorf", "format specifier", format[i]);
-
-        } else
-            putchar(format[i]);
+        }
     }
+
+    printf("%.*s", flen-upto, &format[upto]);
 }
 
 void errorParser (parserCtx* ctx, const char* format, ...) {
@@ -178,7 +182,7 @@ void errorAnalyzer (analyzerCtx* ctx, const ast* Node, const char* format, ...) 
     debugWait();
 }
 
-/*:::: PARSER ERRORS ::::*/
+/*==== Parser errors ====*/
 
 void errorExpected (parserCtx* ctx, const char* expected) {
     errorParser(ctx, "expected $h, found '$h'", expected, ctx->lexer->buffer);
@@ -220,7 +224,7 @@ void errorFileNotFound (parserCtx* ctx, const char* name) {
     errorParser(ctx, "file not found, '$h'", name);
 }
 
-/*:::: ANALYZER ERRORS ::::*/
+/*==== Analyzer errors ====*/
 
 void errorTypeExpected (analyzerCtx* ctx, const ast* Node, const char* where, const char* expected) {
     errorAnalyzer(ctx, Node, "$h requires $s, found $a", where, expected, Node);
